@@ -3,10 +3,37 @@
 @section('content')
     <div class="container">
         <div class="row justify-content-center">
+            <div class="col-md-2">
+                <div class="card">
+                    <div class="card-header">Menu</div>
+
+                    <div class="card-body">
+                        <ul class="list-group">
+                            <a href=" {{route('pizza.index')}} " class="list-group-item list-group-item-action">View</a>
+                            <a href=" {{route('pizza.create')}} " class="list-group-item list-group-item-action">Create</a>
+                            <a href=" {{route('user.order')}} " class="list-group-item list-group-item-action">User Order</a>
+                        </ul>
+                    </div>
+                </div>
+                @if (count($errors) > 0)
+                <div class="card mt-5">
+                    <div class="card-body">
+                       
+                        <div class="alert alert-danger"> 
+                            @foreach ($errors->all() as $error)
+                            <p>{{ $error }}</p>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+                @endif
+            </div>
+
             <div class="col-md-10">
                 <div class="card">
                     <div class="card-header">All Pizza</div>
-
+                    <a href=" {{route('pizza.create')}} "><button class="btn btn-success m-2" style="float: right">Add Pizza</button></a>
+                    
                     <div class="card-body">
                         @if (session('message'))
                             <div class="alert alert-success" role="alert">
@@ -30,29 +57,69 @@
                                 </tr>
                             </thead>
                             <tbody class="table-group-divider">
-                                @foreach ($pizzas as $key => $pizza)
-                                    <tr>
-                                        <th scope="row"> {{ $key + 1 }} </th>
-                                        <td>
-                                            <img src=" {{ Storage::url($pizza->image) }} " width="80" alt=""
-                                                srcset="">
-                                        </td>
-                                        <td> {{ $pizza->name }} </td>
-                                        <td>{{ $pizza->description }}</td>
-                                        <td>{{ $pizza->category }}</td>
-                                        <td>{{ $pizza->small_pizza_price }}</td>
-                                        <td>{{ $pizza->medium_pizza_price }}</td>
-                                        <td>{{ $pizza->large_pizza_price }}</td>
-                                        <td>
-                                            <button class="btn btn-primary">Edit</button>
-                                        </td>
-                                        <td>
-                                            <button class="btn btn-danger">Delete</button>
-                                        </td>
-                                    </tr>
-                                @endforeach
+                                @if (count($pizzas) > 0)
+                                    @foreach ($pizzas as $key => $pizza)
+                                        <tr>
+                                            <th scope="row"> {{ $key + 1 }} </th>
+                                            <td>
+                                                <img src=" {{ Storage::url($pizza->image) }} " width="80" alt=""
+                                                    srcset="">
+                                            </td>
+                                            <td> {{ $pizza->name }} </td>
+                                            <td>{{ $pizza->description }}</td>
+                                            <td>{{ $pizza->category }}</td>
+                                            <td>{{ $pizza->small_pizza_price }}</td>
+                                            <td>{{ $pizza->medium_pizza_price }}</td>
+                                            <td>{{ $pizza->large_pizza_price }}</td>
+                                            <td>
+                                                <a href=" {{ route('pizza.edit', $pizza->id) }} "><button
+                                                        class="btn btn-primary">Edit</button></a>
+
+                                            </td>
+                                            <td>
+                                                {{-- Button delete --}}
+                                                <!-- Button trigger modal -->
+                                                <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                                                    data-bs-target="#exampleModal">Delete</button>
+
+                                                <!-- Modal -->
+                                                <div class="modal fade" id="exampleModal" tabindex="-1"
+                                                    aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                    <form action=" {{ route('pizza.destroy', $pizza->id) }} "
+                                                        method="post">@csrf
+                                                        @method('DELETE')
+                                                        <div class="modal-dialog">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <h1 class="modal-title fs-5" id="exampleModalLabel">
+                                                                        Delete
+                                                                        Confirm</h1>
+                                                                    <button type="button" class="btn-close"
+                                                                        data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                </div>
+                                                                <div class="modal-body">
+                                                                    Are you sure ?
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <button type="button" class="btn btn-secondary"
+                                                                        data-bs-dismiss="modal">Close</button>
+                                                                    <button type="submit"
+                                                                        class="btn btn-primary">Delete</button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                                {{-- Button delete end --}}
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                @else
+                                    <p>No Pizza to show</p>
+                                @endif
                             </tbody>
                         </table>
+                        {{ $pizzas->links() }}
                     </div>
                 </div>
             </div>
